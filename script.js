@@ -1,4 +1,6 @@
 const busId = document.getElementById('select1');
+const busStop = document.getElementById('button2');
+const output = document.getElementById('output');
 
 function selectId(item) {
   busId.innerHTML = item;
@@ -18,7 +20,7 @@ function busStopData() {
     newButton.setAttribute('data-bs-toggle', 'dropdown');
     newButton.setAttribute('data-bs-auto-close', 'true');
     newButton.setAttribute('aria-expanded', 'false');
-    document.getElementById('button2').innerHTML = '';
+    busStop.innerHTML = '';
     newButton.textContent = 'Select bus stop';
     
     const newDropdownMenu = document.createElement('ul');
@@ -29,22 +31,52 @@ function busStopData() {
       anchor.className = 'dropdown-item';
       let list = document.createElement('li');
       list.textContent = busStopId[i].no;
+                            list.onclick = () => {
+                              // Get the selected bus stop id
+                              const selectedBusStopId = busStopId[i].no;
+
+                              // Call displayData with the selected bus stop id
+                              displayData(selectedBusStopId);
+                            };
       anchor.appendChild(list);
       newDropdownMenu.appendChild(anchor);
     }
-    
+
     const newButtonGroup = document.createElement('div');
     newButtonGroup.className = 'btn-group';
     newButtonGroup.appendChild(newButton);
     newButtonGroup.appendChild(newDropdownMenu);
 
-    const label = document.createElement('span'); // Create a label span element.
+    const label = document.createElement('span'); 
     label.textContent = 'Bus stop: ';
-    document.getElementById('button2').innerHTML = ''; // Clear the content of button2
-    document.getElementById('button2').appendChild(label); // Append the label
-    document.getElementById('button2').appendChild(newButtonGroup); // Append the newButtonGroup
-  
+    busStop.innerHTML = ''; 
+    busStop.appendChild(label); 
+    busStop.appendChild(newButtonGroup); 
+    
+    //output.innerHTML = '';
+    // Create a table element with Bootstrap classes
+    const table = document.createElement('table');
+    table.className = 'table bg-success-subtle mt-5 pt-5 pb-5';
+
+    // Create a table header row with Bootstrap classes
+    const headerRow = document.createElement('tr');
+   // headerRow.className = 'table table-warning mt-5';
+    const headers = ["Bus Number", "Next", "Subsequent", "Next2", "Next3"];
+    headers.forEach(headerText => {
+      const th = document.createElement('th');
+      th.textContent = headerText;
+      headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+    output.appendChild(table);
+   
   })
   .catch(err => console.error(err));
 }
 
+function displayData(selectedBusStopId) {
+
+  
+}
+
+                                   
