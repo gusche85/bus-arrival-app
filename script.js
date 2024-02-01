@@ -13,70 +13,98 @@ function busStopData() {
   .then(response => response.json())
   .then(data => {
     const busStopId = data.services;
-    
+
     const newButton = document.createElement('button');
     newButton.className = 'btn btn-success dropdown-toggle';
     newButton.type = 'button';
     newButton.setAttribute('data-bs-toggle', 'dropdown');
     newButton.setAttribute('data-bs-auto-close', 'true');
     newButton.setAttribute('aria-expanded', 'false');
-    busStop.innerHTML = '';
-    newButton.textContent = 'Select bus stop';
-    
+    busStop.innerHTML = 'Bus ID: ';
+    newButton.textContent = 'Select bus';
+    busStop.appendChild(newButton);
+
     const newDropdownMenu = document.createElement('ul');
     newDropdownMenu.className = 'dropdown-menu';
-    
+
     for (let i=0; i<busStopId.length; i++) {
       const anchor = document.createElement('a');
       anchor.className = 'dropdown-item';
       let list = document.createElement('li');
-      list.textContent = busStopId[i].no;
-                            list.onclick = () => {
-                              // Get the selected bus stop id
-                              const selectedBusStopId = busStopId[i].no;
-
-                              // Call displayData with the selected bus stop id
-                              displayData(selectedBusStopId);
-                            };
+      list.textContent = busStopId[i].no;               
+      list.onclick = () => { 
+                    const selectedBusStopId = busStopId[i].no;
+                    displayData(selectedBusStopId);              
+                   };   
       anchor.appendChild(list);
       newDropdownMenu.appendChild(anchor);
     }
-
-    const newButtonGroup = document.createElement('div');
-    newButtonGroup.className = 'btn-group';
-    newButtonGroup.appendChild(newButton);
-    newButtonGroup.appendChild(newDropdownMenu);
-
-    const label = document.createElement('span'); 
-    label.textContent = 'Bus stop: ';
-    busStop.innerHTML = ''; 
-    busStop.appendChild(label); 
-    busStop.appendChild(newButtonGroup); 
-    
-    //output.innerHTML = '';
-    // Create a table element with Bootstrap classes
-    const table = document.createElement('table');
-    table.className = 'table bg-success-subtle mt-5 pt-5 pb-5';
-
-    // Create a table header row with Bootstrap classes
-    const headerRow = document.createElement('tr');
-   // headerRow.className = 'table table-warning mt-5';
-    const headers = ["Bus Number", "Next", "Subsequent", "Next2", "Next3"];
-    headers.forEach(headerText => {
-      const th = document.createElement('th');
-      th.textContent = headerText;
-      headerRow.appendChild(th);
-    });
-    table.appendChild(headerRow);
-    output.appendChild(table);
-   
+busStop.appendChild(newDropdownMenu);
   })
   .catch(err => console.error(err));
 }
 
-function displayData(selectedBusStopId) {
 
-  
+function displayTimeInMinutes(timeStamp) {
+  if (!timeStamp) {
+    return 'N/A';
+  }
+  const arrivalTime = new Date(timeStamp);
+  const currentTime = new Date();
+  const diffInMinutes = Math.round((arrivalTime - currentTime) / 60000);
+  return diffInMinutes > 0 ? `${diffInMinutes} mins` : 'Arriving';
+}
+
+
+function displayData(selectedBusStopId) {
+  fetch(`https://arrivelah2.busrouter.sg/?id=83139`)
+    .then(response => response.json())
+    .then(data => {
+      const services = data.services;
+      const busData = document.createElement('table');
+      busData.className = 'table table-warning border-dark';
+      const tHead = document.createElement('thead');
+      const tRow = document.createElement('tr');
+      const rowHead = document.createElement('th');
+      const header = ["Bus Number", "Next", "Subsequent", "Next2", "Next3"];
+      header.forEach(head => {
+        const newHead = document.createElement('th'); // Create a new th element for each header
+        newHead.textContent = head;
+        tRow.appendChild(newHead); // Append the newHead to the tRow
+      });
+      tHead.appendChild(tRow);
+      busData.appendChild(tHead);
+
+      const selectedBus = services.find(bus => bus.no === selectedBusStopId);
+      if (selectedBus) {
+        const rowBody = document.createElement('tBody');
+        const row = document.createElement('tr');
+        const rowBusNo = document.createElement('th');
+        rowBusNo.textContent = selectedBus.no; // Corrected assignment
+        row.appendChild(rowBusNo); // Append the rowBusNo to the row
+
+        function addCell(text) {
+          const cell = document.createElement('td');
+          cell.textContent = displayTimeInMinutes(text); // Now displays text in minutes
+          row.appendChild(cell); // Append the cell to the row
+        }
+
+        addCell(selectedBus.next?.time);
+        addCell(selectedBus.subsequent?.time);
+        addCell(selectedBus.next2?.time);
+        addCell(selectedBus.next3?.time);
+
+
+        rowBody.appendChild(row); // Append the row to the rowBody
+        busData.appendChild(rowBody); // Append the rowBody to the busData
+
+        // Append the busData table to the output element
+
+      }
+       output.innerHTML = ''; // Clear the output element
+        output.appendChild(busData); // Append the busData table to the output
+    })
+    .catch(err => console.error(err));
 }
 
                                    
