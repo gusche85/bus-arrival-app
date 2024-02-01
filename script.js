@@ -55,14 +55,13 @@ function displayTimeInMinutes(timeStamp) {
   return diffInMinutes > 0 ? `${diffInMinutes} mins` : 'Arriving';
 }
 
-
 function displayData(selectedBusStopId) {
   fetch(`https://arrivelah2.busrouter.sg/?id=83139`)
     .then(response => response.json())
     .then(data => {
       const services = data.services;
       const busData = document.createElement('table');
-      busData.className = 'table table-warning border-dark';
+      busData.className = 'table table-warning border border-dark';
       const tHead = document.createElement('thead');
       const tRow = document.createElement('tr');
       const rowHead = document.createElement('th');
@@ -81,12 +80,12 @@ function displayData(selectedBusStopId) {
         const row = document.createElement('tr');
         const rowBusNo = document.createElement('th');
         rowBusNo.textContent = selectedBus.no; // Corrected assignment
-        row.appendChild(rowBusNo); // Append the rowBusNo to the row
+        row.appendChild(rowBusNo); // append td to th
 
         function addCell(text) {
-          const cell = document.createElement('td');
-          cell.textContent = displayTimeInMinutes(text); // Now displays text in minutes
-          row.appendChild(cell); // Append the cell to the row
+          const cell = document.createElement('td'); //cell
+          cell.textContent = displayTimeInMinutes(text); //displays text in minutes
+          row.appendChild(cell); //cell to the row
         }
 
         addCell(selectedBus.next?.time);
@@ -94,15 +93,11 @@ function displayData(selectedBusStopId) {
         addCell(selectedBus.next2?.time);
         addCell(selectedBus.next3?.time);
 
-
-        rowBody.appendChild(row); // Append the row to the rowBody
-        busData.appendChild(rowBody); // Append the rowBody to the busData
-
-        // Append the busData table to the output element
-
+        rowBody.appendChild(row); //tr to tbody
+        busData.appendChild(rowBody); 
       }
-       output.innerHTML = ''; // Clear the output element
-        output.appendChild(busData); // Append the busData table to the output
+      output.innerHTML = ''; // Clear the output element at every selection
+      output.appendChild(busData); // Append table to the output
     })
     .catch(err => console.error(err));
 }

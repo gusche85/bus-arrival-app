@@ -13,7 +13,7 @@ and the app have:
 3. Shows the `next` buses timing in `minutes`
 
 ## Extensions
--  For each bus, show `next`, `subsequent`, `next2`, `next3` timing
+-  For each bus, show `next`, `next2`, `next3` timing
 -  Create a dropdown to filter through each buses
 
 More info: https://github.com/cheeaun/arrivelah
